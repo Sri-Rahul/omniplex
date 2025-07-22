@@ -34,16 +34,50 @@ git clone git@github.com:[YOUR_GITHUB_ACCOUNT]/omniplex.git
 yarn
 ```
 
-3. Fill out secrets in `.env.local`
+3. Set up environment variables (optional)
+
+Copy `.env.local.example` to `.env.local` and fill out the secrets:
 
 ```bash
-BING_API_KEY=
-OPENAI_API_KEY=
+# Firebase Configuration (optional - app will work with demo values)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
-OPENWEATHERMAP_API_KEY=
-ALPHA_VANTAGE_API_KEY=
-FINNHUB_API_KEY=
+# OpenAI Configuration (required for AI chat features)
+OPENAI_API_KEY=your_openai_api_key
+
+# Stripe Configuration (for payment processing - test mode)
+STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+# Other API keys (optional for specific features)
+BING_API_KEY=your_bing_api_key
+OPENWEATHERMAP_API_KEY=your_weather_api_key
+ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
+FINNHUB_API_KEY=your_finnhub_key
 ```
+
+**Note**: The app will run without Firebase configuration using demo values. Firebase features (authentication, file upload, chat history) will be disabled but the core chat functionality will work.
+
+### Stripe Integration (Payment Processing)
+
+Omniplex includes integrated Stripe payment processing for Pro subscriptions:
+
+- **Test Mode Only**: Configured for test payments only
+- **Pro Features**: $10 one-time payment for premium features
+- **Test Cards**: Use card number `4242 4242 4242 4242` with any future expiry and CVC
+- **Payment Flow**: Checkout → Success/Cancel pages → Webhook handling
+
+**Stripe Setup**:
+1. Create a Stripe account and get test API keys
+2. Add keys to `.env.local` (see example above)
+3. Optional: Set up webhook endpoint for payment confirmations
 
 4. Run the development server
 

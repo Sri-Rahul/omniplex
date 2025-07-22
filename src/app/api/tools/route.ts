@@ -1,8 +1,21 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize OpenAI with fallback
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 export async function POST(req: Request) {
+  // Check if OpenAI is configured
+  if (!openai) {
+    return new Response(
+      JSON.stringify({
+        error: "OpenAI API key is not configured. AI features are disabled.",
+      }),
+      { status: 503 }
+    );
+  }
+
   if (req.method !== "POST") {
     return new Response(
       JSON.stringify({

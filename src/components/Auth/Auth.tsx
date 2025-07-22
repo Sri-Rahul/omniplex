@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { setAuthState, setUserDetailsState } from "@/store/authSlice";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 import Spinner from "../Spinner/Spinner";
 
 type Props = {
@@ -23,6 +23,12 @@ const Auth = (props: Props) => {
   const handleAuth = async () => {
     setLoading(true);
     try {
+      if (!isFirebaseInitialized() || !db) {
+        console.warn("Firebase not configured. Authentication disabled.");
+        setLoading(false);
+        return;
+      }
+
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
@@ -71,6 +77,20 @@ const Auth = (props: Props) => {
     }
   };
 
+  const handleTestLogin = () => {
+    // Bypass Firebase and set test user directly
+    const testUser = {
+      uid: "test-user-12345",
+      name: "Test User",
+      email: "test@omniplex.ai",
+      profilePic: "/svgs/User.svg",
+    };
+
+    dispatch(setAuthState(true));
+    dispatch(setUserDetailsState(testUser));
+    props.onClose();
+  };
+
   return (
     <Modal
       size={"lg"}
@@ -113,15 +133,27 @@ const Auth = (props: Props) => {
                   <div className={styles.buttonText}>Signing in</div>
                 </div>
               ) : (
-                <div className={styles.button} onClick={handleAuth}>
-                  <Image
-                    src={"/svgs/Google.svg"}
-                    alt={"Google"}
-                    width={24}
-                    height={24}
-                  />
-                  <div className={styles.buttonText}>Continue with Google</div>
-                </div>
+                <>
+                  <div className={styles.button} onClick={handleAuth}>
+                    <Image
+                      src={"/svgs/Google.svg"}
+                      alt={"Google"}
+                      width={24}
+                      height={24}
+                    />
+                    <div className={styles.buttonText}>Continue with Google</div>
+                  </div>
+                  
+                  <div className={styles.testButton} onClick={handleTestLogin}>
+                    <Image
+                      src={"/svgs/User.svg"}
+                      alt={"Test User"}
+                      width={24}
+                      height={24}
+                    />
+                    <div className={styles.buttonText}>Test Login (Demo Mode)</div>
+                  </div>
+                </>
               )}
             </div>
           </div>

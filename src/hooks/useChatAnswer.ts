@@ -12,7 +12,7 @@ import { selectUserDetailsState } from "@/store/authSlice";
 import { selectAI } from "@/store/aiSlice";
 import { store } from "@/store/store";
 import { doc, updateDoc } from "@firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../firebaseConfig";
 
 type UseChatAnswerProps = {
   threadId: string;

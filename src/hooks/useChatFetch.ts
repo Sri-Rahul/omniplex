@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { db } from "../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import {
   selectChatThread,

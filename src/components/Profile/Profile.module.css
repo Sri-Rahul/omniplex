@@ -89,10 +89,34 @@
   cursor: pointer;
   transition: all 0.25s ease-in-out;
   background-color: #2e2e2e;
+  color: #e8e8e6;
+  font-size: 16px;
+  font-weight: 500;
 }
 .button:hover {
   background-color: #ffffff14;
 }
+
+.proButton {
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  background-color: #6366f1;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+}
+.proButton:hover {
+  background-color: #5855eb;
+  transform: scale(0.99);
+}
+
 .deleteButton {
   width: 100%;
   padding: 6px 12px;
@@ -104,6 +128,9 @@
   cursor: pointer;
   transition: all 0.25s ease-in-out;
   background-color: #bd3c3c;
+  color: #e8e8e6;
+  font-size: 16px;
+  font-weight: 500;
 }
 .deleteButton:hover {
   background-color: #ff0000aa;

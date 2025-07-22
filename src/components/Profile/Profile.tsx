@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useDisclosure } from "@nextui-org/modal";
 import Delete from "../Delete/Delete";
+import StripeCheckout from "../StripeCheckout/StripeCheckout";
 import { getAuth, signOut } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { resetAISettings } from "@/store/aiSlice";
@@ -22,6 +23,7 @@ const Plugins = (props: Props) => {
   const dispatch = useDispatch();
   const userDetails = useSelector(selectUserDetailsState);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isStripeOpen, onOpen: onStripeOpen, onClose: onStripeClose } = useDisclosure();
 
   const handleLogout = async () => {
     const auth = getAuth();
@@ -68,6 +70,9 @@ const Plugins = (props: Props) => {
             </div>
           </div>
           <div className={styles.bottomContainer}>
+            <div onClick={onStripeOpen} className={styles.proButton}>
+              ✨ Upgrade to Pro - $10
+            </div>
             <div onClick={handleLogout} className={styles.button}>
               Log Out
             </div>
@@ -78,6 +83,7 @@ const Plugins = (props: Props) => {
         </div>
       </ScrollShadow>
       <Delete isOpen={isOpen} onClose={onClose} delete={handleLogout} />
+      <StripeCheckout isOpen={isStripeOpen} onClose={onStripeClose} />
     </div>
   );
 };

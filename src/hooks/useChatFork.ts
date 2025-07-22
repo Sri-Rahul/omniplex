@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import { collection, setDoc, doc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../firebaseConfig";
 import { addChatThread, selectChatThread } from "@/store/chatSlice";
 import { RootState } from "@/store/store";
 import { selectUserDetailsState } from "@/store/authSlice";

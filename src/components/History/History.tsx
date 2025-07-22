@@ -24,7 +24,7 @@ import {
   doc,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 
 import Pen from "../../../public/svgs/Pen.svg";
 import Bin from "../../../public/svgs/Bin.svg";

@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../../../firebaseConfig";
 import { cutString, getReadingTimeInMinutes } from "@/utils/utils";
 
 export async function GET(request: Request) {
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     let date = "";
     let readingTime = 0;
 
-    if (id.length == 10) {
+    if (id.length == 10 && isFirebaseInitialized() && db) {
       const indexDocRef = doc(db, "index", id);
       const indexDocSnapshot = await getDoc(indexDocRef);
 

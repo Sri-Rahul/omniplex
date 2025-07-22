@@ -18,7 +18,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../../../firebaseConfig";
+import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 
 import Bin from "../../../public/svgs/Bin.svg";
 import FolderInactive from "../../../public/svgs/sidebar/Folder_Inactive.svg";

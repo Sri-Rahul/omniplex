@@ -17,8 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { createChatThread } from "../../store/chatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserDetailsState, selectAuthState } from "@/store/authSlice";
-import { db } from "../../../firebaseConfig";
-import { storage } from "../../../firebaseConfig";
+import { db, storage, isFirebaseInitialized } from "../../../firebaseConfig";
 import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -177,10 +176,22 @@ const MainPrompt = () => {
         setLoading(true);
         setButtonText("Processing");
         try {
+          if (!isFirebaseInitialized() || !db || !storage) {
+            toast.error("Firebase not configured. File upload disabled.", {
+              position: "top-center",
+              style: {
+                padding: "6px 18px",
+                color: "#fff",
+                background: "#FF4B4B",
+              },
+            });
+            return;
+          }
+          
           if (userId) {
             const libraryId = nanoid(10);
             const storageRef = ref(
-              storage,
+              storage!,
               `users/${userId}/library/${libraryId}`
             );
             const snapshot = await uploadBytes(storageRef, file);
@@ -193,7 +204,7 @@ const MainPrompt = () => {
               date: new Date().toLocaleDateString("en-GB"),
             };
 
-            const libraryRef = collection(db, "users", userId, "library");
+            const libraryRef = collection(db!, "users", userId, "library");
             await setDoc(doc(libraryRef, libraryId), newFileInfo);
 
             setFileInfo(newFileInfo);

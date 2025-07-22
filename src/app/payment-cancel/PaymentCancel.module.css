@@ -1,0 +1,119 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #0f0f0f;
+}
+
+.card {
+  max-width: 480px;
+  width: 100%;
+  background-color: #232323;
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  border: 1px solid #2d2d2d;
+}
+
+.iconContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 24px auto;
+}
+
+.cancelIcon {
+  filter: brightness(0) invert(1);
+}
+
+.content {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #a0a0a0;
+  margin-bottom: 24px;
+}
+
+.reasons {
+  text-align: left;
+}
+
+.reasonsTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #edededaa;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.primaryButton {
+  display: block;
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #6366f1;
+  color: #ffffff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.25s ease-in-out;
+}
+
+.primaryButton:hover {
+  background-color: #5855eb;
+  transform: scale(0.99);
+}
+
+.secondaryButton {
+  display: block;
+  width: 100%;
+  padding: 12px 24px;
+  background-color: transparent;
+  color: #a0a0a0;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  text-decoration: none;
+  transition: all 0.25s ease-in-out;
+}
+
+.secondaryButton:hover {
+  background-color: #2d2d2d;
+  border-color: #505050;
+  color: #ffffff;
+}
