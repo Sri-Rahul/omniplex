@@ -43,6 +43,24 @@ jobs:
           # Copy public directory
           cp -r public deployment-package/public
           
+          # Create a proper package.json for standalone deployment
+          cat > deployment-package/package.json << 'EOF'
+          {
+            "name": "omniplex",
+            "version": "1.0.0",
+            "private": true,
+            "scripts": {
+              "start": "node server.js"
+            },
+            "engines": {
+              "node": "18.x"
+            }
+          }
+          EOF
+          
+          # Ensure server.js is executable
+          chmod +x deployment-package/server.js
+          
           cd deployment-package
           
           # Use tar instead of zip to preserve file permissions and symlinks
