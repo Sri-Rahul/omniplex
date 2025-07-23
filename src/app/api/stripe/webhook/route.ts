@@ -15,6 +15,7 @@ const initializeStripe = () => {
       return true;
     } else {
       console.warn('Invalid or missing Stripe secret key');
+      console.warn('Available keys:', Object.keys(process.env).filter(k => k.includes('STRIPE') || k.includes('APPSETTING')));
       return false;
     }
   } catch (error) {

@@ -1,7 +1,7 @@
 // Stripe configuration utility for Azure deployment compatibility
 
 export const getStripePublishableKey = (): string | null => {
-  // Try multiple sources for the publishable key
+  // Try multiple sources for the publishable key (including Azure APPSETTING prefix)
   let publishableKey: string | undefined;
 
   // 1. Next.js environment variable (build time)
@@ -9,7 +9,12 @@ export const getStripePublishableKey = (): string | null => {
     publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   }
 
-  // 2. Runtime config (Azure deployment)
+  // 2. Azure APPSETTING prefixed version
+  if (!publishableKey && process.env.APPSETTING_NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    publishableKey = process.env.APPSETTING_NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  }
+
+  // 3. Runtime config (Azure deployment)
   if (!publishableKey && typeof window !== 'undefined') {
     try {
       // Try to get from window object if injected
@@ -19,7 +24,7 @@ export const getStripePublishableKey = (): string | null => {
     }
   }
 
-  // 3. Try to get from global process.env again (Azure Web Apps sometimes set these differently)
+  // 4. Try to get from global process.env again (Azure Web Apps sometimes set these differently)
   if (!publishableKey && typeof process !== 'undefined' && process.env) {
     publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   }
@@ -34,7 +39,7 @@ export const getStripePublishableKey = (): string | null => {
 };
 
 export const getStripeSecretKey = (): string | null => {
-  // Try multiple sources for the secret key
+  // Try multiple sources for the secret key (including Azure APPSETTING prefix)
   let secretKey: string | undefined;
 
   // 1. Next.js environment variable
@@ -42,7 +47,12 @@ export const getStripeSecretKey = (): string | null => {
     secretKey = process.env.STRIPE_SECRET_KEY;
   }
 
-  // 2. Try to get from global process.env again (Azure Web Apps sometimes set these differently)
+  // 2. Azure APPSETTING prefixed version
+  if (!secretKey && process.env.APPSETTING_STRIPE_SECRET_KEY) {
+    secretKey = process.env.APPSETTING_STRIPE_SECRET_KEY;
+  }
+
+  // 3. Try to get from global process.env again (Azure Web Apps sometimes set these differently)
   if (!secretKey && typeof process !== 'undefined' && process.env) {
     secretKey = process.env.STRIPE_SECRET_KEY;
   }
