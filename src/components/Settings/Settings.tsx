@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./Settings.module.css";
 import Image from "next/image";
 import Auth from "../Auth/Auth";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Slider } from "@nextui-org/slider";
+import { ScrollShadow } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
+import { Select, SelectItem } from "@heroui/react";
+import { Slider } from "@heroui/react";
 import {
   setModel,
   setTemperature,
@@ -173,7 +173,7 @@ const Settings = () => {
             }}
           >
             {MODELS.map((model) => (
-              <SelectItem key={model.value} value={model.value}>
+              <SelectItem key={model.value}>
                 {model.label}
               </SelectItem>
             ))}

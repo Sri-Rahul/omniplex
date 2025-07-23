@@ -5,7 +5,7 @@ import Image from "next/image";
 import styles from "./StripeCheckout.module.css";
 import { loadStripe } from "@stripe/stripe-js";
 import toast from "react-hot-toast";
-import { Modal, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalContent } from "@heroui/react";
 import Spinner from "../Spinner/Spinner";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, Firestore } from "firebase/firestore";
 import { db, isFirebaseInitialized } from "../../../../firebaseConfig";
 import { cutString, getReadingTimeInMinutes } from "@/utils/utils";
 

@@ -12,14 +12,14 @@ import { focusOptions } from "../../utils/data";
 import { FileInfo, Mode, Chat } from "@/utils/types";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
-import { useDisclosure } from "@nextui-org/modal";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { useDisclosure } from "@heroui/react";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { createChatThread } from "../../store/chatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserDetailsState, selectAuthState } from "@/store/authSlice";
 import { db, storage, isFirebaseInitialized } from "../../../firebaseConfig";
-import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, doc, setDoc, writeBatch, Firestore } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, FirebaseStorage } from "firebase/storage";
 
 import Arrow from "../../../public/svgs/Arrow.svg";
 import Filter from "../../../public/svgs/Filter.svg";
@@ -89,7 +89,7 @@ const MainPrompt = () => {
       };
       console.log("Chat Mode: ", currentMode);
 
-      if (userId) {
+      if (userId && db) {
         try {
           console.log("Adding document...", userId);
           const batch = writeBatch(db);
@@ -269,7 +269,7 @@ const MainPrompt = () => {
                 offset={4}
                 containerPadding={0}
                 isOpen={open}
-                onOpenChange={(open) => setOpen(open)}
+                onOpenChange={(open: boolean) => setOpen(open)}
               >
                 <PopoverTrigger>
                   <div className={styles.button}>

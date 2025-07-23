@@ -3,7 +3,7 @@ import styles from "./Actions.module.css";
 import Image from "next/image";
 import ShareModal from "../Share/Share";
 import toast from "react-hot-toast";
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 import { Chat, ChatThread } from "@/utils/types";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/store/authSlice";

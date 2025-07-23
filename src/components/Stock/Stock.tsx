@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Stock.module.css";
 import { StockType } from "@/utils/types";
 import { AreaChart } from "@tremor/react";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/react";
 
 type StockProps = {
   stockResults?: StockType;

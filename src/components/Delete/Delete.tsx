@@ -3,7 +3,7 @@ import styles from "./Delete.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalContent } from "@heroui/react";
 import SpinnerWhite from "../SpinnerWhite/SpinnerWhite";
 import { resetChat } from "@/store/chatSlice";
 import { resetAISettings } from "@/store/aiSlice";
@@ -20,6 +20,7 @@ import {
   collection,
   getDocs,
   writeBatch,
+  Firestore,
 } from "firebase/firestore";
 import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 import toast from "react-hot-toast";
@@ -44,6 +45,18 @@ const Delete = (props: Props) => {
 
       if (user) {
         await deleteUser(user);
+      }
+
+      // Check if db is available before proceeding
+      if (!db) {
+        console.log("Firebase not initialized, skipping user data deletion");
+        dispatch(resetAuth());
+        dispatch(resetChat());
+        dispatch(resetAISettings());
+        router.push("/");
+        props.onClose();
+        setLoading(false);
+        return;
       }
 
       const userRef = doc(db, "users", userId);

@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import styles from "./Auth.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Modal, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalContent } from "@heroui/react";
 import { useDispatch } from "react-redux";
 import { setAuthState, setUserDetailsState } from "@/store/authSlice";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp, Firestore } from "firebase/firestore";
 import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 import Spinner from "../Spinner/Spinner";
 

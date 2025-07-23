@@ -4,9 +4,9 @@ import Image from "next/image";
 import Auth from "../Auth/Auth";
 import SpinnerWhite from "../SpinnerWhite/SpinnerWhite";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@nextui-org/skeleton";
-import { useDisclosure } from "@nextui-org/modal";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Skeleton } from "@heroui/react";
+import { useDisclosure } from "@heroui/react";
+import { ScrollShadow } from "@heroui/react";
 import {
   formatTimestamp,
   getRelativeDateLabel,
@@ -23,6 +23,7 @@ import {
   deleteDoc,
   doc,
   Timestamp,
+  Firestore,
 } from "firebase/firestore";
 import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 
@@ -48,7 +49,7 @@ const History = () => {
   }, [isAuthenticated, userDetails.uid]);
 
   const fetchChatHistory = async () => {
-    if (isAuthenticated && userDetails.uid) {
+    if (isAuthenticated && userDetails.uid && db) {
       setLoading(true);
       const historyRef = collection(db, "users", userDetails.uid, "history");
       const q = query(historyRef, orderBy("createdAt", "desc"));
@@ -66,7 +67,7 @@ const History = () => {
   };
 
   const handleDelete = async (threadId: string) => {
-    if (isAuthenticated && userDetails.uid) {
+    if (isAuthenticated && userDetails.uid && db) {
       setDeleting(true);
       await deleteDoc(doc(db, "users", userDetails.uid, "history", threadId));
       fetchChatHistory();

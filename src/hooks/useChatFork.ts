@@ -26,7 +26,7 @@ const useChatFork = (threadId: string) => {
     try {
       const newChatThreadId = nanoid(10);
 
-      if (userId) {
+      if (userId && db) {
         const historyRef = collection(db, "users", userId, "history");
         await setDoc(doc(historyRef, newChatThreadId), {
           chats: chatThread.chats,

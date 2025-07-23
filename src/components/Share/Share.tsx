@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Share.module.css";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { Modal, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalContent } from "@heroui/react";
 import { ChatThread } from "@/utils/types";
 import {
   cutString,

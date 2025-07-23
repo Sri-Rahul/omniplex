@@ -3,9 +3,9 @@ import styles from "./Library.module.css";
 import Image from "next/image";
 import Auth from "../Auth/Auth";
 import SpinnerWhite from "../SpinnerWhite/SpinnerWhite";
-import { Skeleton } from "@nextui-org/skeleton";
-import { useDisclosure } from "@nextui-org/modal";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Skeleton } from "@heroui/react";
+import { useDisclosure } from "@heroui/react";
+import { ScrollShadow } from "@heroui/react";
 import { getRelativeDateLabel, cutString } from "@/utils/utils";
 import { LibraryItem } from "@/utils/types";
 import { useSelector } from "react-redux";
@@ -17,6 +17,7 @@ import {
   orderBy,
   deleteDoc,
   doc,
+  Firestore,
 } from "firebase/firestore";
 import { db, isFirebaseInitialized } from "../../../firebaseConfig";
 
@@ -36,7 +37,7 @@ const Library = () => {
   }, [isAuthenticated, userDetails.uid]);
 
   const fetchLibraryData = async () => {
-    if (isAuthenticated && userDetails.uid) {
+    if (isAuthenticated && userDetails.uid && db) {
       setLoading(true);
       const libraryRef = collection(db, "users", userDetails.uid, "library");
       const q = query(libraryRef, orderBy("date", "desc"));
@@ -54,7 +55,7 @@ const Library = () => {
   };
 
   const handleDelete = async (itemId: string) => {
-    if (isAuthenticated && userDetails.uid) {
+    if (isAuthenticated && userDetails.uid && db) {
       setDeleting(true);
       await deleteDoc(doc(db, "users", userDetails.uid, "library", itemId));
       fetchLibraryData();

@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Weather.module.css";
 import { WeatherType } from "@/utils/types";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/react";
 
 type WeatherProps = {
   weatherResults?: WeatherType;

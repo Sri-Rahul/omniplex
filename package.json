@@ -14,6 +14,7 @@
     "@headlessui/react": "^2.0.3",
     "@headlessui/tailwindcss": "^0.2.0",
     "@heroicons/react": "^2.1.1",
+    "@heroui/react": "^2.8.1",
     "@lottiefiles/react-lottie-player": "^3.5.3",
     "@reduxjs/toolkit": "^2.2.3",
     "@remixicon/react": "^4.2.0",

@@ -26,8 +26,8 @@ try {
 }
 
 // Export with fallbacks for better TypeScript support
-export const db = dbInstance as Firestore;
-export const storage = storageInstance as FirebaseStorage;
+export const db: Firestore | null = dbInstance;
+export const storage: FirebaseStorage | null = storageInstance;
 
 export const initializeFirebase = (): FirebaseApp | null => {
   return app;

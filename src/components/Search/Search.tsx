@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from "./Search.module.css";
 import { SearchType } from "@/utils/types";
 import { cutString, getSecondLevelDomain } from "../../utils/utils";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/react";
 
 type SearchProps = {
   searchResults?: SearchType;

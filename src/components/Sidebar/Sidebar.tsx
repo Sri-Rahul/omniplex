@@ -12,7 +12,7 @@ import Auth from "../Auth/Auth";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/store/authSlice";
-import { useDisclosure } from "@nextui-org/modal";
+import { useDisclosure } from "@heroui/react";
 
 import Logo from "../../../public/Logo.svg";
 import Menu from "../../../public/svgs/Menu.svg";

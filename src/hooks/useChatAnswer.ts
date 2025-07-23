@@ -47,7 +47,7 @@ const useChatAnswer = ({
         const updatedChatThread = selectChatThread(updatedState, threadId);
         const updatedChats = updatedChatThread?.chats || [];
         const updatedMessages = updatedChatThread?.messages || [];
-        if (userId) {
+        if (userId && db) {
           try {
             const chatThreadRef = doc(db, "users", userId, "history", threadId);
             await updateDoc(chatThreadRef, {

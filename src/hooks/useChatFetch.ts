@@ -19,6 +19,13 @@ const useChatFetch = (id: string) => {
 
   const fetchChatThread = useCallback(async () => {
     setIsFetching(true);
+    
+    if (!db) {
+      console.warn("Firebase not initialized, skipping chat thread fetch");
+      setIsFetching(false);
+      return;
+    }
+    
     try {
       const indexDocRef = doc(db, "index", id);
       const indexDocSnapshot = await getDoc(indexDocRef);

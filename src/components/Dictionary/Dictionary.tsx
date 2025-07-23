@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import styles from "./Dictionary.module.css";
 import { DictionaryType } from "@/utils/types";
 import { Player } from "@lottiefiles/react-lottie-player";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/react";
 
 import AudioLottie from "../../../public/lottie/Audio.json";
 

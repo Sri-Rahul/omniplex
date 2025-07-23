@@ -6,7 +6,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/react";
 import { Citation } from "@/utils/types";
 
 import Logo from "../../../public/Logo.svg";

@@ -1,5 +1,5 @@
 import styles from "./ChatFetch.module.css";
-import { Skeleton } from "@nextui-org/skeleton";
+import { Skeleton } from "@heroui/react";
 
 const ChatFetch = () => {
   return (
