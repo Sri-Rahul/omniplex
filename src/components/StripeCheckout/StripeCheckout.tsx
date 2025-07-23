@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./StripeCheckout.module.css";
 import { loadStripe } from "@stripe/stripe-js";
@@ -14,44 +14,77 @@ type Props = {
   onClose: () => void;
 };
 
-// Initialize Stripe with fallback handling for Azure deployment
+// Initialize Stripe with runtime configuration for Azure deployment
 let stripePromise: Promise<any> | null = null;
 
-const initializeStripe = () => {
+const initializeStripeFromServer = async (): Promise<boolean> => {
   try {
+    console.log('Fetching Stripe configuration from server...');
+    const response = await fetch('/api/stripe/config');
+    const config = await response.json();
+    
+    if (config.configured && config.publishableKey) {
+      console.log('Server provided Stripe key:', config.publishableKey.substring(0, 20) + '...');
+      stripePromise = loadStripe(config.publishableKey);
+      return true;
+    } else {
+      console.warn('Server-side Stripe configuration failed:', config.error);
+      return false;
+    }
+  } catch (error) {
+    console.warn('Failed to fetch Stripe config from server:', error);
+    return false;
+  }
+};
+
+const initializeStripe = async (): Promise<boolean> => {
+  try {
+    // First try the original method (build-time environment variables)
     const publishableKey = getStripePublishableKey();
     
     if (publishableKey) {
-      console.log('Initializing Stripe with key:', publishableKey.substring(0, 20) + '...');
+      console.log('Initializing Stripe with build-time key:', publishableKey.substring(0, 20) + '...');
       stripePromise = loadStripe(publishableKey);
       return true;
-    } else {
-      console.warn('Invalid or missing Stripe publishable key');
-      return false;
     }
+    
+    // If that fails, try fetching from server (runtime environment variables)
+    console.log('Build-time key not available, trying server-side configuration...');
+    return await initializeStripeFromServer();
   } catch (error) {
     console.warn('Stripe initialization failed:', error);
     return false;
   }
 };
 
-// Initialize on module load
-initializeStripe();
-
 const StripeCheckout = (props: Props) => {
   const [loading, setLoading] = useState(false);
+  const [stripeInitialized, setStripeInitialized] = useState(false);
+
+  // Initialize Stripe when the modal opens
+  useEffect(() => {
+    if (props.isOpen && !stripeInitialized) {
+      console.log('Modal opened, initializing Stripe...');
+      initializeStripe().then((success) => {
+        setStripeInitialized(success);
+        if (!success) {
+          console.error('Failed to initialize Stripe');
+        }
+      });
+    }
+  }, [props.isOpen, stripeInitialized]);
 
   const handlePayment = async () => {
     setLoading(true);
     console.log('Starting payment process...');
 
     try {
-      // Check if Stripe is properly configured, retry initialization if needed
+      // Ensure Stripe is initialized
       if (!stripePromise) {
-        console.log('Stripe not initialized, attempting retry...');
-        const initialized = initializeStripe();
+        console.log('Stripe not initialized, attempting initialization...');
+        const initialized = await initializeStripe();
         if (!initialized) {
-          console.error('Stripe not initialized - missing publishable key');
+          console.error('Stripe not initialized - configuration failed');
           toast.error("Payment system not configured. Please contact support.", {
             position: "top-center",
             style: {
@@ -63,6 +96,7 @@ const StripeCheckout = (props: Props) => {
           setLoading(false);
           return;
         }
+        setStripeInitialized(true);
       }
 
       console.log('Creating checkout session...');
@@ -203,6 +237,13 @@ const StripeCheckout = (props: Props) => {
                     <Spinner />
                   </div>
                   <div className={styles.buttonText}>Processing...</div>
+                </div>
+              ) : !stripeInitialized ? (
+                <div className={styles.button}>
+                  <div className={styles.spinner}>
+                    <Spinner />
+                  </div>
+                  <div className={styles.buttonText}>Initializing Payment...</div>
                 </div>
               ) : (
                 <div className={styles.button} onClick={handlePayment}>
