@@ -28,37 +28,26 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Install production dependencies only
-        run: |
-          rm -rf node_modules
-          npm ci --only=production  # ← Clean production install for deployment
-
       - name: Create deployment package
         run: |
           # Create a clean deployment structure
           mkdir deployment-package
           
-          # Copy built application
-          cp -r .next deployment-package/
-          cp -r public deployment-package/
-          cp package.json deployment-package/
-          cp package-lock.json deployment-package/
-          cp -r node_modules deployment-package/
-          
-          # Create startup script for Azure
-          echo '#!/bin/sh' > deployment-package/startup.sh
-          echo 'cd /home/site/wwwroot' >> deployment-package/startup.sh
-          echo 'npm start' >> deployment-package/startup.sh
-          chmod +x deployment-package/startup.sh
+          # Use Next.js standalone output
+          cp -r .next/standalone/* deployment-package/
+          cp -r .next/static deployment-package/.next/static
+          cp -r public deployment-package/public
           
           cd deployment-package
-          zip -r ../release.zip .
+          
+          # Use tar instead of zip to preserve file permissions and symlinks
+          tar -czf ../release.tar.gz .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
+          path: release.tar.gz
           retention-days: 1  # ✅ Cleanup artifacts
 
   deploy:
@@ -75,7 +64,7 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: tar -xzf release.tar.gz
       
       - name: Login to Azure
         uses: azure/login@v2
