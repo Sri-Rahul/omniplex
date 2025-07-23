@@ -58,8 +58,18 @@ jobs:
           }
           EOF
           
-          # Ensure server.js is executable
+          # Create a startup script for Azure
+          cat > deployment-package/startup.sh << 'EOF'
+          #!/bin/bash
+          export PORT=${PORT:-8080}
+          export NODE_ENV=production
+          cd /home/site/wwwroot
+          exec node server.js
+          EOF
+          
+          # Make scripts executable
           chmod +x deployment-package/server.js
+          chmod +x deployment-package/startup.sh
           
           cd deployment-package
           
@@ -102,3 +112,4 @@ jobs:
           app-name: 'omniplex-rahul'
           slot-name: 'Production'
           package: .
+          startup-command: 'bash startup.sh'
