@@ -7,27 +7,36 @@ import { loadStripe } from "@stripe/stripe-js";
 import toast from "react-hot-toast";
 import { Modal, ModalContent } from "@heroui/react";
 import Spinner from "../Spinner/Spinner";
+import { getStripePublishableKey } from "../../utils/stripe-config";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-// Initialize Stripe with fallback handling
+// Initialize Stripe with fallback handling for Azure deployment
 let stripePromise: Promise<any> | null = null;
 
-try {
-  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-  console.log('Stripe publishable key available:', !!publishableKey);
-  if (publishableKey && publishableKey.startsWith('pk_')) {
-    console.log('Initializing Stripe with key:', publishableKey.substring(0, 20) + '...');
-    stripePromise = loadStripe(publishableKey);
-  } else {
-    console.warn('Invalid or missing Stripe publishable key');
+const initializeStripe = () => {
+  try {
+    const publishableKey = getStripePublishableKey();
+    
+    if (publishableKey) {
+      console.log('Initializing Stripe with key:', publishableKey.substring(0, 20) + '...');
+      stripePromise = loadStripe(publishableKey);
+      return true;
+    } else {
+      console.warn('Invalid or missing Stripe publishable key');
+      return false;
+    }
+  } catch (error) {
+    console.warn('Stripe initialization failed:', error);
+    return false;
   }
-} catch (error) {
-  console.warn('Stripe initialization failed:', error);
-}
+};
+
+// Initialize on module load
+initializeStripe();
 
 const StripeCheckout = (props: Props) => {
   const [loading, setLoading] = useState(false);
@@ -37,19 +46,23 @@ const StripeCheckout = (props: Props) => {
     console.log('Starting payment process...');
 
     try {
-      // Check if Stripe is properly configured
+      // Check if Stripe is properly configured, retry initialization if needed
       if (!stripePromise) {
-        console.error('Stripe not initialized - missing publishable key');
-        toast.error("Payment system not configured. Please contact support.", {
-          position: "top-center",
-          style: {
-            padding: "6px 18px",
-            color: "#fff",
-            background: "#FF4B4B",
-          },
-        });
-        setLoading(false);
-        return;
+        console.log('Stripe not initialized, attempting retry...');
+        const initialized = initializeStripe();
+        if (!initialized) {
+          console.error('Stripe not initialized - missing publishable key');
+          toast.error("Payment system not configured. Please contact support.", {
+            position: "top-center",
+            style: {
+              padding: "6px 18px",
+              color: "#fff",
+              background: "#FF4B4B",
+            },
+          });
+          setLoading(false);
+          return;
+        }
       }
 
       console.log('Creating checkout session...');

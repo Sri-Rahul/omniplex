@@ -1,29 +1,46 @@
 import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
+import { getStripeSecretKey } from '../../../../utils/stripe-config';
 
-// Initialize Stripe with fallback handling
+// Initialize Stripe with fallback handling for Azure deployment
 let stripe: Stripe | null = null;
 
-try {
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-  if (stripeSecretKey && stripeSecretKey.startsWith('sk_')) {
-    stripe = new Stripe(stripeSecretKey);
+const initializeStripe = () => {
+  try {
+    const stripeSecretKey = getStripeSecretKey();
+    
+    if (stripeSecretKey) {
+      console.log('Initializing Stripe with secret key:', stripeSecretKey.substring(0, 20) + '...');
+      stripe = new Stripe(stripeSecretKey);
+      return true;
+    } else {
+      console.warn('Invalid or missing Stripe secret key');
+      return false;
+    }
+  } catch (error) {
+    console.warn('Stripe initialization failed:', error);
+    return false;
   }
-} catch (error) {
-  console.warn('Stripe initialization failed:', error);
-}
+};
+
+// Initialize on module load
+initializeStripe();
 
 // Use Node.js runtime for full Stripe SDK support
 // export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Stripe is properly configured
+    // Check if Stripe is properly configured, retry initialization if needed
     if (!stripe) {
-      return NextResponse.json(
-        { error: 'Stripe is not properly configured. Please check your environment variables.' },
-        { status: 500 }
-      );
+      console.log('Stripe not initialized, attempting retry...');
+      const initialized = initializeStripe();
+      if (!initialized) {
+        return NextResponse.json(
+          { error: 'Stripe is not properly configured. Please check your environment variables.' },
+          { status: 500 }
+        );
+      }
     }
 
     const body = await request.json();
@@ -38,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await stripe!.paymentIntents.create({
       amount: Math.round(amount),
       currency,
       metadata: {
