@@ -36,8 +36,7 @@ jobs:
           # Use Next.js standalone output
           cp -r .next/standalone/* deployment-package/
           
-          # Create .next directory and copy static files
-          mkdir -p deployment-package/.next
+          # Copy static files to the correct location (standalone build expects them in .next/static)
           cp -r .next/static deployment-package/.next/static
           
           # Copy public directory
