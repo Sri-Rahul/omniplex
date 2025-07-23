@@ -19,20 +19,22 @@ let stripePromise: Promise<any> | null = null;
 
 const initializeStripeFromServer = async (): Promise<boolean> => {
   try {
-    console.log('Fetching Stripe configuration from server...');
-    const response = await fetch('/api/stripe/config');
+    console.log('Fetching Stripe configuration from debug endpoint (workaround)...');
+    // Use the debug endpoint since it can access the environment variables
+    const response = await fetch('/api/debug/env');
     const config = await response.json();
     
-    if (config.configured && config.publishableKey) {
-      console.log('Server provided Stripe key:', config.publishableKey.substring(0, 20) + '...');
-      stripePromise = loadStripe(config.publishableKey);
+    if (config.directPublishableKey || config.appSettingPublishableKey) {
+      const publishableKey = config.directPublishableKey || config.appSettingPublishableKey;
+      console.log('Debug endpoint provided Stripe key:', publishableKey.substring(0, 20) + '...');
+      stripePromise = loadStripe(publishableKey);
       return true;
     } else {
-      console.warn('Server-side Stripe configuration failed:', config.error);
+      console.warn('Debug endpoint could not provide valid Stripe key:', config);
       return false;
     }
   } catch (error) {
-    console.warn('Failed to fetch Stripe config from server:', error);
+    console.warn('Failed to fetch Stripe config from debug endpoint:', error);
     return false;
   }
 };
@@ -48,9 +50,29 @@ const initializeStripe = async (): Promise<boolean> => {
       return true;
     }
     
-    // If that fails, try fetching from server (runtime environment variables)
-    console.log('Build-time key not available, trying server-side configuration...');
-    return await initializeStripeFromServer();
+    // If that fails, try the debug endpoint (we know this works in Azure)
+    console.log('Build-time key not available, trying debug endpoint...');
+    const debugSuccess = await initializeStripeFromServer();
+    if (debugSuccess) {
+      return true;
+    }
+    
+    // Last resort: try the config endpoint
+    console.log('Debug endpoint failed, trying config endpoint...');
+    try {
+      const response = await fetch('/api/stripe/config');
+      const config = await response.json();
+      
+      if (config.configured && config.publishableKey) {
+        console.log('Config endpoint provided Stripe key:', config.publishableKey.substring(0, 20) + '...');
+        stripePromise = loadStripe(config.publishableKey);
+        return true;
+      }
+    } catch (error) {
+      console.warn('Config endpoint also failed:', error);
+    }
+    
+    return false;
   } catch (error) {
     console.warn('Stripe initialization failed:', error);
     return false;
@@ -65,10 +87,25 @@ const StripeCheckout = (props: Props) => {
   useEffect(() => {
     if (props.isOpen && !stripeInitialized) {
       console.log('Modal opened, initializing Stripe...');
+      console.log('Current stripe promise state:', !!stripePromise);
+      console.log('Current initialization state:', stripeInitialized);
+      
       initializeStripe().then((success) => {
+        console.log('Stripe initialization result:', success);
         setStripeInitialized(success);
         if (!success) {
-          console.error('Failed to initialize Stripe');
+          console.error('Failed to initialize Stripe - all methods exhausted');
+          // Show error toast
+          toast.error("Payment system initialization failed. Please try again or contact support.", {
+            position: "top-center",
+            style: {
+              padding: "6px 18px",
+              color: "#fff",
+              background: "#FF4B4B",
+            },
+          });
+        } else {
+          console.log('✓ Stripe successfully initialized');
         }
       });
     }
