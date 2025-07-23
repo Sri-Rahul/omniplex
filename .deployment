@@ -1,0 +1,2 @@
+[config]
+command = npm ci --only=production --no-optional
