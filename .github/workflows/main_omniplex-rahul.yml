@@ -33,10 +33,10 @@ jobs:
           # Create a clean deployment structure
           mkdir deployment-package
           
-          # Use Next.js standalone output
-          cp -r .next/standalone/* deployment-package/
+          # Use Next.js standalone output (copy all files and directories including hidden ones)
+          cp -r .next/standalone/. deployment-package/
           
-          # Copy static files to the correct location (standalone build expects them in .next/static)
+          # Copy static files (they're not included in standalone output)
           cp -r .next/static deployment-package/.next/static
           
           # Copy public directory
