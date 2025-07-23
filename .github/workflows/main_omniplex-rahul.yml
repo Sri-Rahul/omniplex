@@ -35,26 +35,24 @@ jobs:
 
       - name: Create deployment package
         run: |
+          # Create a clean deployment structure
           mkdir deployment-package
           
-          # Verify .next folder exists and copy with verbose output
-          ls -la .next/
-          cp -rv .next deployment-package/
-          cp -rv public deployment-package/
-          cp -v package.json deployment-package/
-          cp -v package-lock.json deployment-package/
-          cp -rv node_modules deployment-package/
+          # Copy built application
+          cp -r .next deployment-package/
+          cp -r public deployment-package/
+          cp package.json deployment-package/
+          cp package-lock.json deployment-package/
+          cp -r node_modules deployment-package/
           
-          # Verify BUILD_ID exists
-          cat .next/BUILD_ID || echo "BUILD_ID not found!"
+          # Create startup script for Azure
+          echo '#!/bin/sh' > deployment-package/startup.sh
+          echo 'cd /home/site/wwwroot' >> deployment-package/startup.sh
+          echo 'npm start' >> deployment-package/startup.sh
+          chmod +x deployment-package/startup.sh
           
           cd deployment-package
-          
-          # Verify contents before zipping
-          ls -la
-          ls -la .next/
-          
-          zip -r ../release.zip . -x "*.git*" "*.env*" "node_modules/.cache/*"
+          zip -r ../release.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
